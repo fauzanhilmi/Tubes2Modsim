@@ -4,6 +4,14 @@ globals [
   positions_matrix
 ]
 
+patches-own [
+ ;;f_val = g_val + h_val (A* Search algorithm)
+ f_val
+ g_val
+ h_val
+ parent_patch ;;predecessor patch for get_path
+]
+
 ;; Default procedures; setup & go
 to setup
   clear-all
@@ -93,23 +101,91 @@ to create_borders
 end
 
 ;; Procedures for path finding
+to-report get_path [source_patch dest_patch]
+  let is_search_done false
+  let search_path []
+  let current_patch 0
+  let queue []
+  let visited []
 
+  set queue lput source_patch queue
+
+  while [is_search_done = false] [
+    ifelse length queue != 0
+    [
+      set queue sort-by [[f_val] of ?1 < [f_val] of ?2] queue
+
+      set current_patch item 0 queue
+      set queue remove-item 0 queue
+
+      set visited lput current_patch visited
+
+      ask current_patch [
+        ifelse any? neighbors with [ (pxcor = [pxcor] of dest_patch) and (pycor = [pycor] of dest_patch) and abs ([pxcor] of current_patch - [pxcor] of self) <= 1 and abs ([pycor] of current_patch - [pycor] of self) <= 1]
+        [
+          set is_search_done true ]
+        [
+          ask neighbors with [pcolor != brown and pcolor != white and (not member? self visited) and (self != parent_patch)] [
+            if not member? self queue and self != source_patch and self != dest_patch [
+              if abs ([pxcor] of current_patch - [pxcor] of self) <= 1 and abs ([pycor] of current_patch - [pycor] of self) <= 1 [ ;;Mengatasi kasus overflow dari monitor
+
+                set queue lput self queue
+
+                set parent_patch current_patch
+                set g_val [g_val] of parent_patch + 1
+                set h_val distance dest_patch
+                set f_val (g_val + h_val) ] ] ]
+        ]
+      ]
+    ]
+    [
+      print("Path doesn't exist")
+      report []
+    ]
+  ]
+
+  set search_path lput current_patch search_path
+
+  let temp_path first search_path
+  while [temp_path != source_patch] [
+    set search_path lput [parent_patch] of temp_path search_path
+    set temp_path [parent_patch] of temp_path
+  ]
+
+  set search_path fput dest_patch search_path
+  set search_path reverse search_path
+
+  report search_path
+end
 
 ;;TEST
 to test
-ask turtles [
-  if (who mod 4 = 0) [
-    move random 360
+  ;;let origin patch with [pxcor = 0 and pycor = 0]
+  let origin 0
+  ask patches [
+   if pxcor = 0 and pycor = 0 [
+    set origin self
+   ]
   ]
-]
+;  let origin patch-at 0 0
+  let t 0
+  ask turtles [
+    if(who = 0) [
+     set t patch-here
+    ]
+  ]
+  print origin
+  print t
+  let path get_path origin t
+  print path
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-779
+1065
 418
-21
+32
 14
 13.0
 1
@@ -121,8 +197,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--21
-21
+-32
+32
 -14
 14
 0
