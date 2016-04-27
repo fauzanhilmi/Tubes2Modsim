@@ -15,8 +15,8 @@ to setup
   set-default-shape turtles "square"
   let i 0
   while [ i != 4] [
-    let x random max-pxcor
-    let y random max-pycor
+    let x random-pxcor
+    let y random-pycor
 
     ;; set turtle 0, 4, 8, 12
     create-turtles 1 [setxy x y set color one-of base-colors]
@@ -39,7 +39,6 @@ to setup
   ask turtles [
    set heading 0
   ]
-
 end
 
 to go
@@ -48,10 +47,8 @@ to go
   if (who mod 4 = 0) [
     move random 360
   ]
-
 ]
 end
-
 
 ;; Procedures for turtles
 to set_position [x y]
@@ -95,23 +92,25 @@ to create_borders
   ]
 end
 
+;; Procedures for path finding
+
+
 ;;TEST
 to test
 ask turtles [
   if (who mod 4 = 0) [
     move random 360
   ]
-
 ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-1039
-470
-31
-16
+779
+418
+21
+14
 13.0
 1
 10
@@ -122,10 +121,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--31
-31
--16
-16
+-21
+21
+-14
+14
 0
 0
 1
