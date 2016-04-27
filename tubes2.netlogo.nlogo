@@ -43,6 +43,7 @@ to setup
 end
 
 to go
+  create_borders
   ask turtles [
   if (who mod 4 = 0) [
     move random 360
@@ -86,6 +87,14 @@ to draw
   ]
 end
 
+to create_borders
+  ask patches with [pcolor = white] [
+    ask neighbors with [pcolor != white] [
+     set pcolor brown
+    ]
+  ]
+end
+
 ;;TEST
 to test
 ask turtles [
@@ -99,9 +108,9 @@ end
 GRAPHICS-WINDOW
 210
 10
-649
+1039
 470
-16
+31
 16
 13.0
 1
@@ -113,8 +122,8 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
+-31
+31
 -16
 16
 0
