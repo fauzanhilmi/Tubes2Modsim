@@ -47,6 +47,7 @@ to setup
     matrix:set positions_matrix i 7 y
 
     set i i + 1
+    reset-ticks
   ]
   ask turtles [
    set heading 0
@@ -78,13 +79,45 @@ to move [direction]
   ;; 315   0  45
   ;; 270   T  90
   ;; 225  180 135
+  let listdx [0 1 1 1 0 -1 -1 -1]
+  let listdy [1 1 0 -1 -1 -1 0 1]
   ifelse (who mod 4 = 0) [
-    ask turtle who       [set heading direction fd 1 set heading 0]
-    ask turtle (who + 1) [set heading direction fd 1 set heading 0]
-    ask turtle (who + 2) [set heading direction fd 1 set heading 0]
-    ask turtle (who + 3) [set heading direction fd 1 set heading 0] ]
+    ask turtle who [setxy xcor + item (direction / 45) listdx ycor + item (direction / 45) listdy]
+    ask turtle (who + 1) [setxy xcor + item (direction / 45) listdx ycor + item (direction / 45) listdy]
+    ask turtle (who + 2) [setxy xcor + item (direction / 45) listdx ycor + item (direction / 45) listdy]
+    ask turtle (who + 3) [setxy xcor + item (direction / 45) listdx ycor + item (direction / 45) listdy]
+  ]
   [
     print "error on move"]
+end
+
+;;move ke salah satu patch yang bertetangga
+;;asumsi patch selalu bertetangga
+;;BELUM DICEK apa bisa gerak atau engga
+to move_towards [ptch]
+  ifelse (who mod 4 = 0) [
+
+     let direction 0
+     let is_stop false
+     while [is_stop = false] [
+      set heading direction
+      let ahead patch-ahead 1
+
+      ;;print ahead
+      ifelse ([pxcor] of ahead = [pxcor] of ptch and [pycor] of ahead = [pycor] of ptch) [
+        set is_stop true
+      ][
+        set direction direction + 45
+        if direction > 359 [
+         print "error on move_towards : patch not found"
+         die ]
+      ]
+     ]
+
+    move direction
+    print "move" ]
+  [
+    print "error on move_towards"]
 end
 
 to rotate
@@ -116,6 +149,27 @@ to rotate
     ]
   [
     print "error on rotate"]
+end
+
+to trace_path [tik in_path]
+
+  let path in_path
+  let init_length length path
+  print init_length
+  let i tik
+  if (tik < init_length) [
+    let dest_patch item i path
+
+    print (word "x,y:" [xcor] of self "," [ycor] of self)
+    print (word "i: " i )
+    print (word "moving to: " dest_patch)
+    ;;if i > 0 and i < init_length - 1[
+     move_towards dest_patch
+    ;;]     ;;set path remove-item 0 path
+      set i i + 1
+  ]
+
+  set heading 0
 end
 
 ;; Procedures for patch
@@ -193,8 +247,6 @@ to-report get_path [source_patch dest_patch]
   report search_path
 end
 
-
-
 ;;TEST PROCEDURE
 to test
   let origin 0
@@ -211,8 +263,20 @@ to test
   ]
   print origin
   print t
-  let path get_path origin t
-  print path
+  let path get_path t origin
+  ;;print path
+
+
+  ask turtles [print who]
+  let i 1
+  while [i < 20][
+    ask turtle 0 [
+      trace_path i path
+      set i i + 1
+    ]
+    tick
+  ]
+  ;;print path
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -236,8 +300,8 @@ GRAPHICS-WINDOW
 32
 -14
 14
-0
-0
+1
+1
 1
 ticks
 30.0
