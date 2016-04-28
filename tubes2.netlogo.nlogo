@@ -120,49 +120,213 @@ to move_towards [ptch]
     print "error on move_towards"]
 end
 
-to rotate
-  ifelse (who mod 4 = 0)[
-    if ([rotation] of turtle who = 0)[
-      ask turtle (who + 1) [setxy xcor ycor + 2]
-      ask turtle (who + 2) [setxy xcor + 1 ycor + 1]
-      ask turtle (who + 3) [setxy xcor - 1 ycor - 1]
-    ]
-    if ([rotation] of turtle who = 1)[
-      ask turtle (who + 1) [setxy xcor + 2 ycor]
-      ask turtle (who + 2) [setxy xcor + 1 ycor - 1]
-      ask turtle (who + 3) [setxy xcor - 1 ycor + 1]
-    ]
-    if ([rotation] of turtle who = 2)[
-      ask turtle (who + 1) [setxy xcor ycor - 2]
-      ask turtle (who + 2) [setxy xcor - 1 ycor - 1]
-      ask turtle (who + 3) [setxy xcor + 1 ycor + 1]
-    ]
-    if ([rotation] of turtle who = 3)[
-      ask turtle (who + 1) [setxy xcor - 2 ycor]
-      ask turtle (who + 2) [setxy xcor - 1 ycor + 1]
-      ask turtle (who + 3) [setxy xcor + 1 ycor - 1]
-    ]
-    ask turtle who [set rotation rotation + 1]
-      if ([rotation] of turtle who = 4)[
-        ask turtle who [set rotation 0]
+to rotate [direction]
+  ;;  1 : clockwise
+  ;; -1 : counter-clockwise
+  ifelse (who mod 4 = 0)
+  [
+    let x0 [xcor] of self
+    let y0 [ycor] of self
+    let xdif1 x0 - [xcor] of turtle (who + 1)
+    let ydif1 y0 - [ycor] of turtle (who + 1)
+    let xdif2 x0 - [xcor] of turtle (who + 2)
+    let ydif2 y0 - [ycor] of turtle (who + 2)
+    let xdif3 x0 - [xcor] of turtle (who + 3)
+    let ydif3 y0 - [ycor] of turtle (who + 3)
+    let delta_x 0
+    let delta_y 0
+
+    if direction = -1
+    [
+      ask turtle (who + 1)
+      [
+         ifelse xdif1 = 1
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x 1
+             set delta_y -1
+           ]
+           [
+             set delta_x -1
+             set delta_y -1
+           ]
+         ]
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x 1
+             set delta_y 1
+           ]
+           [
+             set delta_x -1
+             set delta_y 1
+           ]
+         ]
+         setxy x0 + delta_x y0 + delta_y
+       ]
+
+      ask turtle (who + 2)
+      [
+        ifelse(xdif2 - ydif2 = 1)
+        [
+          ifelse(xdif2 = 1)
+          [
+             set delta_x 0
+             set delta_y -1
+          ]
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif2 = 0)
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y 1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
+      ]
+
+      ask turtle (who + 3)
+      [
+        ifelse(xdif3 - ydif3 = 1)
+        [
+          ifelse(xdif3 = 1)
+          [
+             set delta_x 0
+             set delta_y -1
+          ]
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif3 = 0)
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y 1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
       ]
     ]
+
+    if direction = 1
+    [
+      ask turtle (who + 1)
+      [
+         ifelse xdif1 = 1
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x -1
+             set delta_y 1
+           ]
+           [
+             set delta_x 1
+             set delta_y 1
+           ]
+         ]
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x -1
+             set delta_y -1
+           ]
+           [
+             set delta_x 1
+             set delta_y -1
+           ]
+         ]
+         setxy x0 + delta_x y0 + delta_y
+       ]
+
+      ask turtle (who + 2)
+      [
+        ifelse(xdif2 - ydif2 = 1)
+        [
+          ifelse(xdif2 = 1)
+          [
+             set delta_x 0
+             set delta_y 1
+          ]
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif2 = 0)
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y -1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
+      ]
+
+      ask turtle (who + 3)
+      [
+        ifelse(xdif3 - ydif3 = 1)
+        [
+          ifelse(xdif3 = 1)
+          [
+             set delta_x 0
+             set delta_y 1
+          ]
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif3 = 0)
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y -1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
+      ]
+    ]
+  ]
   [
-    print "error on rotate"]
+   print "error on rotate"
+  ]
 end
 
 to trace_path [tik in_path]
 
   let path in_path
   let init_length length path
-  print init_length
+  ;;print init_length
   let i tik
   if (tik < init_length) [
     let dest_patch item i path
 
-    print (word "x,y:" [xcor] of self "," [ycor] of self)
-    print (word "i: " i )
-    print (word "moving to: " dest_patch)
+    ;;print (word "x,y:" [xcor] of self "," [ycor] of self)
+    ;;print (word "i: " i )
+    ;;print (word "moving to: " dest_patch)
     ;;if i > 0 and i < init_length - 1[
      move_towards dest_patch
     ;;]     ;;set path remove-item 0 path
@@ -228,6 +392,7 @@ to-report get_path [source_patch dest_patch]
       ]
     ]
     [
+      user-message("Path doesn't exist")
       print("Path doesn't exist")
       report []
     ]
@@ -300,8 +465,8 @@ GRAPHICS-WINDOW
 32
 -14
 14
-1
-1
+0
+0
 1
 ticks
 30.0
