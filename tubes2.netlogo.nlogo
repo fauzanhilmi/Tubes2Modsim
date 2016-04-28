@@ -4,6 +4,10 @@ globals [
   positions_matrix
 ]
 
+turtles-own[
+  rotation
+]
+
 patches-own [
  ;;f_val = g_val + h_val (A* Search algorithm)
  f_val
@@ -83,6 +87,37 @@ to move [direction]
     print "error on move"]
 end
 
+to rotate
+  ifelse (who mod 4 = 0)[
+    if ([rotation] of turtle who = 0)[
+      ask turtle (who + 1) [setxy xcor ycor + 2]
+      ask turtle (who + 2) [setxy xcor + 1 ycor + 1]
+      ask turtle (who + 3) [setxy xcor - 1 ycor - 1]
+    ]
+    if ([rotation] of turtle who = 1)[
+      ask turtle (who + 1) [setxy xcor + 2 ycor]
+      ask turtle (who + 2) [setxy xcor + 1 ycor - 1]
+      ask turtle (who + 3) [setxy xcor - 1 ycor + 1]
+    ]
+    if ([rotation] of turtle who = 2)[
+      ask turtle (who + 1) [setxy xcor ycor - 2]
+      ask turtle (who + 2) [setxy xcor - 1 ycor - 1]
+      ask turtle (who + 3) [setxy xcor + 1 ycor + 1]
+    ]
+    if ([rotation] of turtle who = 3)[
+      ask turtle (who + 1) [setxy xcor - 2 ycor]
+      ask turtle (who + 2) [setxy xcor - 1 ycor + 1]
+      ask turtle (who + 3) [setxy xcor + 1 ycor - 1]
+    ]
+    ask turtle who [set rotation rotation + 1]
+      if ([rotation] of turtle who = 4)[
+        ask turtle who [set rotation 0]
+      ]
+    ]
+  [
+    print "error on rotate"]
+end
+
 ;; Procedures for patch
 to draw
   if mouse-inside? and mouse-down?[
@@ -158,16 +193,16 @@ to-report get_path [source_patch dest_patch]
   report search_path
 end
 
-;;TEST
+
+
+;;TEST PROCEDURE
 to test
-  ;;let origin patch with [pxcor = 0 and pycor = 0]
   let origin 0
   ask patches [
    if pxcor = 0 and pycor = 0 [
     set origin self
    ]
   ]
-;  let origin patch-at 0 0
   let t 0
   ask turtles [
     if(who = 0) [
