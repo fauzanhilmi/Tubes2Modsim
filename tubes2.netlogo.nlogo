@@ -16,6 +16,65 @@ patches-own [
  parent_patch ;;predecessor patch for get_path
 ]
 
+;; Can rotate
+to-report can_rotate [direction]
+  if (who mod 4 = 0)[
+    let result-rotate false
+   ifelse (direction = 1)
+   [
+     let a 0
+     let b 0
+     let xself ([xcor] of self)
+     let yself ([ycor] of self)
+     ask turtle (who + 1)[
+      set a ([xcor] of self) - xself
+      set b ([ycor] of self) - yself
+     ]
+     set a (xself - a)
+     set b (yself - b)
+     ask patch a b [
+       ifelse (pcolor != white ) and (pcolor != brown)[
+         ifelse(not any? turtles-on self)[
+           set result-rotate true
+         ][set result-rotate false]
+       ][set result-rotate false]
+     ]
+   ]
+   [
+     let adiagonal 0
+     let bdiagonal 0
+     let aoneline 0
+     let boneline 0
+     let a 0
+     let b 0
+     ask turtle (who + 2)[
+      set aoneline ([xcor] of self)
+      set boneline ([ycor] of self)
+     ]
+     ask turtle (who + 1)[
+      set adiagonal ([xcor] of self)
+      set bdiagonal ([ycor] of self)
+     ]
+     if (adiagonal = aoneline) [
+       set a adiagonal
+       set b (boneline - bdiagonal)
+     ]
+     if (bdiagonal = boneline) [
+       set a (aoneline - adiagonal)
+       set b bdiagonal
+     ]
+     ask patch a b [
+       ifelse (pcolor != white ) and (pcolor != brown)[
+         ifelse(not any? turtles-on self)[
+           set result-rotate true
+         ] [set result-rotate false]
+       ] [set result-rotate false]
+
+     ]
+   ]
+   report result-rotate
+  ]
+end
 ;; Default procedures; setup & go
 to setup
   clear-all
