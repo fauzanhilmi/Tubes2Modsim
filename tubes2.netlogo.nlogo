@@ -15,6 +15,7 @@ patches-own [
 ; h_val
 ; rot_state
  parent_patch ;;predecessor patch for get_path
+ rot_state
 ]
 ;; Can move
 to-report can_move [direction]
@@ -757,6 +758,7 @@ to-report bfs [source_patch dest_patch]
       let cur_patch patch cur_x cur_y
       ask cur_patch
       [
+        set rot_state cur_rot
         ifelse any? neighbors with [ (pxcor = [pxcor] of dest_patch) and (pycor = [pycor] of dest_patch) and abs ([pxcor] of cur_patch - [pxcor] of self) <= 1 and abs ([pycor] of cur_patch - [pycor] of self) <= 1]
         [
           set is_finished true
@@ -771,7 +773,6 @@ to-report bfs [source_patch dest_patch]
               if abs ([pxcor] of cur_patch - [pxcor] of self) <= 1 and abs ([pycor] of cur_patch - [pycor] of self) <= 1 ;;Mengatasi kasus overflow dari monitor
               [
                 ;;cek bisa move ke sana atau ga pake can_move
-                ;;gimana update rot_state dari patch?
 ;                set queue lput self queue
                 set tile_queue lput cur_tile tile_queue
 
