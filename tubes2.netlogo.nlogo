@@ -14,6 +14,7 @@ patches-own [
  g_val
  h_val
  parent_patch ;;predecessor patch for get_path
+ rot_state
 ]
 ;; Can move
 to-report can_move [direction]
@@ -245,6 +246,7 @@ to-report can_move [direction]
   ]
 
 end
+
 ;; Can rotate
 to-report can_rotate [direction]
   if (who mod 4 = 0)[
@@ -459,6 +461,95 @@ to-report can_rotate [direction]
    report result-rotate
   ]
 end
+
+;;xd yd must be neighbor with x and y
+to-report is_movable [x y r xd yd]
+  let turtle_id 0
+  create-turtles 1 [setxy x y set color black
+                    set turtle_id who]
+  show turtle_id
+  ifelse (r = 0)[
+    create-turtles 1 [setxy x - 1 y - 1 set color black]
+    create-turtles 1 [setxy x - 1 y set color black]
+    create-turtles 1 [setxy x + 1 y set color black]
+  ][
+  ifelse (r = 1)[
+    create-turtles 1 [setxy x - 1 y + 1 set color black]
+    create-turtles 1 [setxy x y + 1 set color black]
+    create-turtles 1 [setxy x y - 1 set color black]
+  ][
+  ifelse (r = 2)[
+    create-turtles 1 [setxy x + 1 y + 1 set color black]
+    create-turtles 1 [setxy x + 1 y set color black]
+    create-turtles 1 [setxy x - 1 y set color black]
+  ][
+  ifelse(r = 3)[
+    create-turtles 1 [setxy x + 1 y - 1 set color black]
+    create-turtles 1 [setxy x y - 1 set color black]
+    create-turtles 1 [setxy x y + 1 set color black]
+  ][
+  ]]]]
+  let direction 0
+  let is_stop false
+  ask turtle turtle_id [
+    while [is_stop = false] [
+      set heading direction
+      let ahead patch-ahead 1
+      ;;print ahead
+      ifelse ([pxcor] of ahead = xd and [pycor] of ahead = yd) [
+        set is_stop true
+      ][
+        set direction direction + 45
+        if direction > 359 [
+          print "error on check_movement : target coordinate not found on neighbor"
+          die ]
+      ]
+    ]
+  ]
+
+  let movable true
+  ask turtle turtle_id [set movable can_move direction]
+  ask turtle (turtle_id + 1) [die]
+  ask turtle (turtle_id + 2) [die]
+  ask turtle (turtle_id + 3) [die]
+  report movable
+end
+
+;;rd: 0, 1 or -1 same as can_rotate
+to-report is_rotatable [x y r rd]
+  let turtle_id 0
+  create-turtles 1 [setxy x y set color black
+                    set turtle_id who]
+
+  ifelse (r = 0)[
+    create-turtles 1 [setxy x - 1 y - 1 set color black]
+    create-turtles 1 [setxy x - 1 y set color black]
+    create-turtles 1 [setxy x + 1 y set color black]
+  ][
+  ifelse (r = 1)[
+    create-turtles 1 [setxy x - 1 y + 1 set color black]
+    create-turtles 1 [setxy x y + 1 set color black]
+    create-turtles 1 [setxy x y - 1 set color black]
+  ][
+  ifelse (r = 2)[
+    create-turtles 1 [setxy x + 1 y + 1 set color black]
+    create-turtles 1 [setxy x + 1 y set color black]
+    create-turtles 1 [setxy x - 1 y set color black]
+  ][
+  ifelse(r = 3)[
+    create-turtles 1 [setxy x + 1 y - 1 set color black]
+    create-turtles 1 [setxy x y - 1 set color black]
+    create-turtles 1 [setxy x y + 1 set color black]
+  ][
+  ]]]]
+  let rotatable false
+  ask turtle turtle_id [set rotatable can_rotate rd]
+  ask turtle (turtle_id + 1) [die]
+  ask turtle (turtle_id + 2) [die]
+  ask turtle (turtle_id + 3) [die]
+  report rotatable
+end
+
 ;; Default procedures; setup & go
 to setup
   clear-all
