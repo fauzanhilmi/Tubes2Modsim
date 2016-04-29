@@ -49,6 +49,30 @@ to-report can_move [direction]
         set y3 ([ycor] of self)
       ]
       ;;check every possible direction
+      if direction = 0[
+        ask patch (x0) (y0 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set bool0 true
+            ][set bool0 false]
+          ][set bool0 false]
+        ]
+          ask patch (x2) (y2 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set bool2 true
+            ][set bool2 false]
+          ][set bool2 false]
+        ]
+         ask patch (x3) (y3 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set bool3 true
+            ][set bool3 false]
+          ][set bool3 false]
+        ]
+         ifelse (bool0 = true) and (bool2 = true) and (bool3 = true)[set result-move true][set result-move false]
+      ]
       if direction = 45[
         ask patch (x0 + 1) (y0 + 1)[
           ifelse (pcolor != white ) and (pcolor != brown)[
