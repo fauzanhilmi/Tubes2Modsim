@@ -15,7 +15,201 @@ patches-own [
  h_val
  parent_patch ;;predecessor patch for get_path
 ]
+;; Can move
+to-report can_move [direction]
+  ;; 315   0  45
+  ;; 270   T  90
+  ;; 225  180 135
+  if (who mod 4 = 0)
+  [
+      let result-move false
+      ;;instantiate value of every turtle from the robot position
+      let x0 ([xcor] of self)
+      let y0 ([ycor] of self)
+      let x1 0
+      let y1 0
+      let x2 0
+      let y2 0
+      let x3 0
+      let y3 0
+      ask turtle (who + 1)[
+        set x1 ([xcor] of self)
+        set y1 ([ycor] of self)
+      ]
+      ask turtle (who + 2)[
+        set x2 ([xcor] of self)
+        set y2 ([ycor] of self)
+      ]
+      ask turtle (who + 3)[
+        set x3 ([xcor] of self)
+        set y3 ([ycor] of self)
+      ]
+      ;;check every possible direction
+      if direction = 45[
+        ask patch (x0 + 1) (y0 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+          ask patch (x2 + 1) (y2 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+         ask patch (x3 + 1) (y3 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      if (direction = 90)[
+        ask patch (x1 + 1) (y0) [
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+         ask patch (x3 + 1) (y3)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      if (direction = 135)[
+        ask patch (x0 + 1) (y0 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+        ask patch (x1 + 1) (y1 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+          ask patch (x2 + 1) (y2 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+         ask patch (x3 + 1) (y3 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      if (direction = 180)[
+        ask patch (x0) (y0 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+        ask patch (x1) (y1 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+         ask patch (x3) (y3 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      if (direction = 225)[
+        ask patch (x1 - 1) (y1 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+          ask patch (x2 - 1) (y2 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+         ask patch (x3 - 1) (y3 - 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      if (direction = 270)[
+        ask patch (x1 - 1) (y1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+          ask patch (x2 - 1) (y2)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      if (direction = 315)[
+        ask patch (x0 - 1) (y0 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+        ask patch (x1 - 1) (y1 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+          ask patch (x2 - 1) (y2 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+         ask patch (x3 - 1) (y3 + 1)[
+          ifelse (pcolor != white ) and (pcolor != brown)[
+            ifelse(not any? turtles-on self)[
+              set result-move true
+            ][set result-move false]
+          ][set result-move false]
+        ]
+      ]
+      report result-move
+  ]
 
+end
 ;; Can rotate
 to-report can_rotate [direction]
   if (who mod 4 = 0)[
@@ -179,213 +373,49 @@ to move_towards [ptch]
     print "error on move_towards"]
 end
 
-to rotate [direction]
-  ;;  1 : clockwise
-  ;; -1 : counter-clockwise
-  ifelse (who mod 4 = 0)
-  [
-    let x0 [xcor] of self
-    let y0 [ycor] of self
-    let xdif1 x0 - [xcor] of turtle (who + 1)
-    let ydif1 y0 - [ycor] of turtle (who + 1)
-    let xdif2 x0 - [xcor] of turtle (who + 2)
-    let ydif2 y0 - [ycor] of turtle (who + 2)
-    let xdif3 x0 - [xcor] of turtle (who + 3)
-    let ydif3 y0 - [ycor] of turtle (who + 3)
-    let delta_x 0
-    let delta_y 0
-
-    if direction = -1
-    [
-      ask turtle (who + 1)
-      [
-         ifelse xdif1 = 1
-         [
-           ifelse ydif1 = 1
-           [
-             set delta_x 1
-             set delta_y -1
-           ]
-           [
-             set delta_x -1
-             set delta_y -1
-           ]
-         ]
-         [
-           ifelse ydif1 = 1
-           [
-             set delta_x 1
-             set delta_y 1
-           ]
-           [
-             set delta_x -1
-             set delta_y 1
-           ]
-         ]
-         setxy x0 + delta_x y0 + delta_y
-       ]
-
-      ask turtle (who + 2)
-      [
-        ifelse(xdif2 - ydif2 = 1)
-        [
-          ifelse(xdif2 = 1)
-          [
-             set delta_x 0
-             set delta_y -1
-          ]
-          [
-            set delta_x -1
-            set delta_y 0
-          ]
-        ]
-        [
-          ifelse(xdif2 = 0)
-          [
-            set delta_x 1
-            set delta_y 0
-          ]
-          [
-            set delta_x 0
-            set delta_y 1
-          ]
-        ]
-        setxy x0 + delta_x y0 + delta_y
-      ]
-
-      ask turtle (who + 3)
-      [
-        ifelse(xdif3 - ydif3 = 1)
-        [
-          ifelse(xdif3 = 1)
-          [
-             set delta_x 0
-             set delta_y -1
-          ]
-          [
-            set delta_x -1
-            set delta_y 0
-          ]
-        ]
-        [
-          ifelse(xdif3 = 0)
-          [
-            set delta_x 1
-            set delta_y 0
-          ]
-          [
-            set delta_x 0
-            set delta_y 1
-          ]
-        ]
-        setxy x0 + delta_x y0 + delta_y
+to rotate
+  ifelse (who mod 4 = 0)[
+    if ([rotation] of turtle who = 0)[
+      ask turtle (who + 1) [setxy xcor ycor + 2]
+      ask turtle (who + 2) [setxy xcor + 1 ycor + 1]
+      ask turtle (who + 3) [setxy xcor - 1 ycor - 1]
+    ]
+    if ([rotation] of turtle who = 1)[
+      ask turtle (who + 1) [setxy xcor + 2 ycor]
+      ask turtle (who + 2) [setxy xcor + 1 ycor - 1]
+      ask turtle (who + 3) [setxy xcor - 1 ycor + 1]
+    ]
+    if ([rotation] of turtle who = 2)[
+      ask turtle (who + 1) [setxy xcor ycor - 2]
+      ask turtle (who + 2) [setxy xcor - 1 ycor - 1]
+      ask turtle (who + 3) [setxy xcor + 1 ycor + 1]
+    ]
+    if ([rotation] of turtle who = 3)[
+      ask turtle (who + 1) [setxy xcor - 2 ycor]
+      ask turtle (who + 2) [setxy xcor - 1 ycor + 1]
+      ask turtle (who + 3) [setxy xcor + 1 ycor - 1]
+    ]
+    ask turtle who [set rotation rotation + 1]
+      if ([rotation] of turtle who = 4)[
+        ask turtle who [set rotation 0]
       ]
     ]
-
-    if direction = 1
-    [
-      ask turtle (who + 1)
-      [
-         ifelse xdif1 = 1
-         [
-           ifelse ydif1 = 1
-           [
-             set delta_x -1
-             set delta_y 1
-           ]
-           [
-             set delta_x 1
-             set delta_y 1
-           ]
-         ]
-         [
-           ifelse ydif1 = 1
-           [
-             set delta_x -1
-             set delta_y -1
-           ]
-           [
-             set delta_x 1
-             set delta_y -1
-           ]
-         ]
-         setxy x0 + delta_x y0 + delta_y
-       ]
-
-      ask turtle (who + 2)
-      [
-        ifelse(xdif2 - ydif2 = 1)
-        [
-          ifelse(xdif2 = 1)
-          [
-             set delta_x 0
-             set delta_y 1
-          ]
-          [
-            set delta_x 1
-            set delta_y 0
-          ]
-        ]
-        [
-          ifelse(xdif2 = 0)
-          [
-            set delta_x -1
-            set delta_y 0
-          ]
-          [
-            set delta_x 0
-            set delta_y -1
-          ]
-        ]
-        setxy x0 + delta_x y0 + delta_y
-      ]
-
-      ask turtle (who + 3)
-      [
-        ifelse(xdif3 - ydif3 = 1)
-        [
-          ifelse(xdif3 = 1)
-          [
-             set delta_x 0
-             set delta_y 1
-          ]
-          [
-            set delta_x 1
-            set delta_y 0
-          ]
-        ]
-        [
-          ifelse(xdif3 = 0)
-          [
-            set delta_x -1
-            set delta_y 0
-          ]
-          [
-            set delta_x 0
-            set delta_y -1
-          ]
-        ]
-        setxy x0 + delta_x y0 + delta_y
-      ]
-    ]
-  ]
   [
-   print "error on rotate"
-  ]
+    print "error on rotate"]
 end
 
 to trace_path [tik in_path]
 
   let path in_path
   let init_length length path
-  ;;print init_length
+  print init_length
   let i tik
   if (tik < init_length) [
     let dest_patch item i path
 
-    ;;print (word "x,y:" [xcor] of self "," [ycor] of self)
-    ;;print (word "i: " i )
-    ;;print (word "moving to: " dest_patch)
+    print (word "x,y:" [xcor] of self "," [ycor] of self)
+    print (word "i: " i )
+    print (word "moving to: " dest_patch)
     ;;if i > 0 and i < init_length - 1[
      move_towards dest_patch
     ;;]     ;;set path remove-item 0 path
@@ -451,7 +481,6 @@ to-report get_path [source_patch dest_patch]
       ]
     ]
     [
-      user-message("Path doesn't exist")
       print("Path doesn't exist")
       report []
     ]
@@ -501,6 +530,12 @@ to test
     tick
   ]
   ;;print path
+end
+
+to test_move [id]
+  ask turtle id [
+    print can_move 270
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
