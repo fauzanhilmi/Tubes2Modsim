@@ -282,23 +282,57 @@ to setup
   while [ i != 4] [
     let x random-pxcor
     let y random-pycor
-
-    ;; set turtle 0, 4, 8, 12
+    ;;Check so that robot won't overflow of the screen
+    while [((x = max-pxcor) or (x = min-pxcor)) or (y = min-pycor)]
+    [
+     set x random-pxcor
+     set y random-pycor
+    ]
+    if ( i != 0)[
+    let can-be-spawned true
+    ask patch x y[
+       if(any? turtles-on self)[set can-be-spawned false]
+    ]
+    ask patch (x + 1) y[
+       if(any? turtles-on self)[set can-be-spawned false]
+    ]
+    ask patch (x - 1) y[
+       if(any? turtles-on self)[set can-be-spawned false]
+    ]
+    ask patch (x - 1) (y - 1)[
+       if(any? turtles-on self)[set can-be-spawned false]
+    ]
+    while [can-be-spawned = false] [
+      set x random-pxcor
+      set y random-pycor
+    ask patch x y[
+       if(not any? turtles-on self)[set can-be-spawned true]
+    ]
+    ask patch (x + 1) y[
+       if(not any? turtles-on self)[set can-be-spawned true]
+    ]
+    ask patch (x - 1) y[
+       if(not any? turtles-on self)[set can-be-spawned true]
+    ]
+    ask patch (x - 1) (y - 1)[
+       if(not any? turtles-on self)[set can-be-spawned true]
+    ]
+    ]
+    ]
     create-turtles 1 [setxy x y set color one-of base-colors]
     matrix:set positions_matrix i 0 x
     matrix:set positions_matrix i 1 y
-    ;; set turtle 1-3, 5-7, 9-11, 13-15
+
     let other_color one-of base-colors
     create-turtles 1 [setxy x - 1 y - 1 set color other_color]
+    create-turtles 1 [setxy x - 1 y set color other_color]
+    create-turtles 1 [setxy x + 1 y set color other_color]
     matrix:set positions_matrix i 2 x - 1
     matrix:set positions_matrix i 3 y - 1
-    create-turtles 1 [setxy x - 1 y set color other_color]
     matrix:set positions_matrix i 4 x - 1
     matrix:set positions_matrix i 5 y
-    create-turtles 1 [setxy x + 1 y set color other_color]
     matrix:set positions_matrix i 6 x + 1
     matrix:set positions_matrix i 7 y
-
     set i i + 1
     reset-ticks
   ]
