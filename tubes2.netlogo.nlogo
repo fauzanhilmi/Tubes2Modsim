@@ -10,9 +10,10 @@ turtles-own[
 
 patches-own [
  ;;f_val = g_val + h_val (A* Search algorithm)
- f_val
- g_val
- h_val
+; f_val
+; g_val
+; h_val
+; rot_state
  parent_patch ;;predecessor patch for get_path
 ]
 ;; Can move
@@ -317,6 +318,7 @@ to go
 end
 
 ;; Procedures for turtles
+;; dalam posisi default
 to set_position [x y]
   ifelse (who mod 4 = 0) [
    ask turtle who       [setxy x y]
@@ -373,33 +375,204 @@ to move_towards [ptch]
     print "error on move_towards"]
 end
 
-to rotate
-  ifelse (who mod 4 = 0)[
-    if ([rotation] of turtle who = 0)[
-      ask turtle (who + 1) [setxy xcor ycor + 2]
-      ask turtle (who + 2) [setxy xcor + 1 ycor + 1]
-      ask turtle (who + 3) [setxy xcor - 1 ycor - 1]
-    ]
-    if ([rotation] of turtle who = 1)[
-      ask turtle (who + 1) [setxy xcor + 2 ycor]
-      ask turtle (who + 2) [setxy xcor + 1 ycor - 1]
-      ask turtle (who + 3) [setxy xcor - 1 ycor + 1]
-    ]
-    if ([rotation] of turtle who = 2)[
-      ask turtle (who + 1) [setxy xcor ycor - 2]
-      ask turtle (who + 2) [setxy xcor - 1 ycor - 1]
-      ask turtle (who + 3) [setxy xcor + 1 ycor + 1]
-    ]
-    if ([rotation] of turtle who = 3)[
-      ask turtle (who + 1) [setxy xcor - 2 ycor]
-      ask turtle (who + 2) [setxy xcor - 1 ycor + 1]
-      ask turtle (who + 3) [setxy xcor + 1 ycor - 1]
-    ]
-    ask turtle who [set rotation rotation + 1]
-      if ([rotation] of turtle who = 4)[
-        ask turtle who [set rotation 0]
+to rotate [direction]
+  ;;  1 : clockwise
+  ;;  0 : no rotation
+  ;; -1 : counter-clockwise
+  ifelse (who mod 4 = 0)
+  [
+    let x0 [xcor] of self
+    let y0 [ycor] of self
+    let xdif1 x0 - [xcor] of turtle (who + 1)
+    let ydif1 y0 - [ycor] of turtle (who + 1)
+    let xdif2 x0 - [xcor] of turtle (who + 2)
+    let ydif2 y0 - [ycor] of turtle (who + 2)
+    let xdif3 x0 - [xcor] of turtle (who + 3)
+    let ydif3 y0 - [ycor] of turtle (who + 3)
+    let delta_x 0
+    let delta_y 0
+
+    if direction = -1
+    [
+      ask turtle (who + 1)
+      [
+         ifelse xdif1 = 1
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x 1
+             set delta_y -1
+           ]
+           [
+             set delta_x -1
+             set delta_y -1
+           ]
+         ]
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x 1
+             set delta_y 1
+           ]
+           [
+             set delta_x -1
+             set delta_y 1
+           ]
+         ]
+         setxy x0 + delta_x y0 + delta_y
+       ]
+
+      ask turtle (who + 2)
+      [
+        ifelse(xdif2 - ydif2 = 1)
+        [
+          ifelse(xdif2 = 1)
+          [
+             set delta_x 0
+             set delta_y -1
+          ]
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif2 = 0)
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y 1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
+      ]
+
+      ask turtle (who + 3)
+      [
+        ifelse(xdif3 - ydif3 = 1)
+        [
+          ifelse(xdif3 = 1)
+          [
+             set delta_x 0
+             set delta_y -1
+          ]
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif3 = 0)
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y 1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
       ]
     ]
+
+    ;;if direction = 0 do nothing
+
+    if direction = 1
+    [
+      ask turtle (who + 1)
+      [
+         ifelse xdif1 = 1
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x -1
+             set delta_y 1
+           ]
+           [
+             set delta_x 1
+             set delta_y 1
+           ]
+         ]
+         [
+           ifelse ydif1 = 1
+           [
+             set delta_x -1
+             set delta_y -1
+           ]
+           [
+             set delta_x 1
+             set delta_y -1
+           ]
+         ]
+         setxy x0 + delta_x y0 + delta_y
+       ]
+
+      ask turtle (who + 2)
+      [
+        ifelse(xdif2 - ydif2 = 1)
+        [
+          ifelse(xdif2 = 1)
+          [
+             set delta_x 0
+             set delta_y 1
+          ]
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif2 = 0)
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y -1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
+      ]
+
+      ask turtle (who + 3)
+      [
+        ifelse(xdif3 - ydif3 = 1)
+        [
+          ifelse(xdif3 = 1)
+          [
+             set delta_x 0
+             set delta_y 1
+          ]
+          [
+            set delta_x 1
+            set delta_y 0
+          ]
+        ]
+        [
+          ifelse(xdif3 = 0)
+          [
+            set delta_x -1
+            set delta_y 0
+          ]
+          [
+            set delta_x 0
+            set delta_y -1
+          ]
+        ]
+        setxy x0 + delta_x y0 + delta_y
+      ]
+    ]
+
+    if direction < -1 or direction > 1
+    [
+      print "error on rotate : direction overflow"
+    ]
+  ]
   [
     print "error on rotate"]
 end
@@ -421,7 +594,6 @@ to trace_path [tik in_path]
     ;;]     ;;set path remove-item 0 path
       set i i + 1
   ]
-
   set heading 0
 end
 
@@ -443,40 +615,140 @@ to create_borders
 end
 
 ;; Procedures for path finding
-to-report get_path [source_patch dest_patch]
-  let is_search_done false
-  let search_path []
-  let current_patch 0
-  let queue []
-  let visited []
+;to-report get_path [source_patch dest_patch]
+;  let is_search_done false
+;  let search_path []
+;  let current_patch 0
+;  let queue []
+;  let visited []
+;
+;  set queue lput source_patch queue
+;
+;  while [is_search_done = false] [
+;    ifelse length queue != 0
+;    [
+;      set queue sort-by [[f_val] of ?1 < [f_val] of ?2] queue
+;
+;      set current_patch item 0 queue
+;      set queue remove-item 0 queue
+;
+;      set visited lput current_patch visited
+;
+;      ask current_patch [
+;        ifelse any? neighbors with [ (pxcor = [pxcor] of dest_patch) and (pycor = [pycor] of dest_patch) and abs ([pxcor] of current_patch - [pxcor] of self) <= 1 and abs ([pycor] of current_patch - [pycor] of self) <= 1]
+;        [
+;          set is_search_done true ]
+;        [
+;          ask neighbors with [pcolor != brown and pcolor != white and (not member? self visited) and (self != parent_patch)] [
+;            if not member? self queue and self != source_patch and self != dest_patch [
+;              if abs ([pxcor] of current_patch - [pxcor] of self) <= 1 and abs ([pycor] of current_patch - [pycor] of self) <= 1 [ ;;Mengatasi kasus overflow dari monitor
+;
+;                set queue lput self queue
+;
+;                set parent_patch current_patch
+;                set g_val [g_val] of parent_patch + 1
+;                set h_val distance dest_patch
+;                set f_val (g_val + h_val) ] ] ]
+;        ]
+;      ]
+;    ]
+;    [
+;      user-message("Path doesn't exist")
+;      print("Path doesn't exist")
+;      report []
+;    ]
+;  ]
+;
+;  set search_path lput current_patch search_path
+;
+;  let temp_path first search_path
+;  while [temp_path != source_patch] [
+;    set search_path lput [parent_patch] of temp_path search_path
+;    set temp_path [parent_patch] of temp_path
+;  ]
+;
+;  set search_path fput dest_patch search_path
+;  set search_path reverse search_path
+;
+;  report search_path
+;end
 
-  set queue lput source_patch queue
 
-  while [is_search_done = false] [
-    ifelse length queue != 0
+to-report is_tile_exist [tile li]
+  foreach li [
+     if item 0 tile = item 0 ? and item 1 tile = item 1 ? and item 2 tile = item 2 ?[
+       report true
+     ]
+  ]
+  report false
+end
+
+to test_ite
+  let l [[1 2 3] [4 5] [6 7 8] [9]]
+  let tile [1 2 5]
+  ifelse is_tile_exist tile l [
+   print "ada"
+  ]
+  [
+   print "nope"
+  ]
+end
+
+to-report bfs [source_patch dest_patch]
+  let tile_queue []
+  let sx [ pxcor ] of source_patch
+  let sy [ pycor ] of source_patch
+  let s_tile (list sx sy 0) ;;def rotation = 0
+  ;;tile = list [x y rotation]
+  set tile_queue lput s_tile tile_queue
+
+  ;;let visited_tiles []
+  ;;coba ga cek yg udah divisit
+  let cur_tile 0
+  let is_finished false
+  ;; set queue lput source_patch queue
+
+  while [is_finished = false]
+  [
+    ifelse length tile_queue != 0
     [
-      set queue sort-by [[f_val] of ?1 < [f_val] of ?2] queue
+      set cur_tile item 0 tile_queue
+      set tile_queue remove-item 0 tile_queue
+      ;;set visited lput cur_tile visited
 
-      set current_patch item 0 queue
-      set queue remove-item 0 queue
+      let cur_x item 0 cur_tile
+      let cur_y item 1 cur_tile
+      let cur_rot item 2 cur_tile
 
-      set visited lput current_patch visited
-
-      ask current_patch [
-        ifelse any? neighbors with [ (pxcor = [pxcor] of dest_patch) and (pycor = [pycor] of dest_patch) and abs ([pxcor] of current_patch - [pxcor] of self) <= 1 and abs ([pycor] of current_patch - [pycor] of self) <= 1]
+      let cur_patch patch cur_x cur_y
+      ask cur_patch
+      [
+        ifelse any? neighbors with [ (pxcor = [pxcor] of dest_patch) and (pycor = [pycor] of dest_patch) and abs ([pxcor] of cur_patch - [pxcor] of self) <= 1 and abs ([pycor] of cur_patch - [pycor] of self) <= 1]
         [
-          set is_search_done true ]
+          set is_finished true
+        ]
         [
-          ask neighbors with [pcolor != brown and pcolor != white and (not member? self visited) and (self != parent_patch)] [
-            if not member? self queue and self != source_patch and self != dest_patch [
-              if abs ([pxcor] of current_patch - [pxcor] of self) <= 1 and abs ([pycor] of current_patch - [pycor] of self) <= 1 [ ;;Mengatasi kasus overflow dari monitor
+          ;;ask neighbors with [pcolor != brown and pcolor != white and (not member? self visited) and (self != parent_patch)]
+          ask neighbors with [pcolor != brown and pcolor != white and (self != parent_patch)]
+          [
+;            if not member? self queue and self != source_patch and self != dest_patch
+            if is_tile_exist cur_tile tile_queue = false  and self != source_patch and self != dest_patch
+            [
+              if abs ([pxcor] of cur_patch - [pxcor] of self) <= 1 and abs ([pycor] of cur_patch - [pycor] of self) <= 1 ;;Mengatasi kasus overflow dari monitor
+              [
+                ;;cek bisa move ke sana atau ga pake can_move
+                ;;gimana update rot_state dari patch?
+;                set queue lput self queue
+                set tile_queue lput cur_tile tile_queue
 
-                set queue lput self queue
+                set parent_patch cur_patch
+              ]
+            ]
+          ]
 
-                set parent_patch current_patch
-                set g_val [g_val] of parent_patch + 1
-                set h_val distance dest_patch
-                set f_val (g_val + h_val) ] ] ]
+          ;;ask rot_states
+
+
         ]
       ]
     ]
@@ -486,49 +758,51 @@ to-report get_path [source_patch dest_patch]
     ]
   ]
 
-  set search_path lput current_patch search_path
-
-  let temp_path first search_path
-  while [temp_path != source_patch] [
-    set search_path lput [parent_patch] of temp_path search_path
-    set temp_path [parent_patch] of temp_path
-  ]
-
-  set search_path fput dest_patch search_path
-  set search_path reverse search_path
-
-  report search_path
+;;TESTESTEST
+;  set search_path lput current_patch search_path
+;
+;  let temp_path first search_path
+;  while [temp_path != source_patch]
+;  [
+;    set search_path lput [parent_patch] of temp_path search_path
+;    set temp_path [parent_patch] of temp_path
+;  ]
+;
+;  set search_path fput dest_patch search_path
+;  set search_path reverse search_path
+;
+;  report search_path
 end
 
 ;;TEST PROCEDURE
 to test
-  let origin 0
-  ask patches [
-   if pxcor = 0 and pycor = 0 [
-    set origin self
-   ]
-  ]
-  let t 0
-  ask turtles [
-    if(who = 0) [
-     set t patch-here
-    ]
-  ]
-  print origin
-  print t
-  let path get_path t origin
+;  let origin 0
+;  ask patches [
+;   if pxcor = 0 and pycor = 0 [
+;    set origin self
+;   ]
+;  ]
+;  let t 0
+;  ask turtles [
+;    if(who = 0) [
+;     set t patch-here
+;    ]
+;  ]
+;  print origin
+;  print t
+;  let path get_path t origin
   ;;print path
 
 
-  ask turtles [print who]
-  let i 1
-  while [i < 20][
-    ask turtle 0 [
-      trace_path i path
-      set i i + 1
-    ]
-    tick
-  ]
+;  ask turtles [print who]
+;  let i 1
+;  while [i < 20][
+;    ask turtle 0 [
+;      trace_path i path
+;      set i i + 1
+;    ]
+;    tick
+;  ]
   ;;print path
 end
 
