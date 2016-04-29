@@ -1015,11 +1015,10 @@ to-report bfs [source_patch dest_patch]
   ;;tile = list [x y rotation]
   set tile_queue lput s_tile tile_queue
 
-  ;;let visited_tiles []
-  ;;coba ga cek yg udah divisit
+  let visited_tiles []
   let cur_tile 0
   let is_finished false
-  ;; set queue lput source_patch queue
+  let cur_patch 0
 
   while [is_finished = false]
   [
@@ -1027,13 +1026,13 @@ to-report bfs [source_patch dest_patch]
     [
       set cur_tile item 0 tile_queue
       set tile_queue remove-item 0 tile_queue
-      ;;set visited lput cur_tile visited
+      set visited_tiles lput cur_tile visited_tiles
 
       let cur_x item 0 cur_tile
       let cur_y item 1 cur_tile
       let cur_rot item 2 cur_tile
 
-      let cur_patch patch cur_x cur_y
+      set cur_patch patch cur_x cur_y
       ask cur_patch
       [
         set rot_state cur_rot
@@ -1046,90 +1045,100 @@ to-report bfs [source_patch dest_patch]
           ask neighbors with [pcolor != brown and pcolor != white and (self != parent_patch)]
           [
 ;            if not member? self queue and self != source_patch and self != dest_patch
-            if is_tile_exist cur_tile tile_queue = false  and self != source_patch and self != dest_patch
+            if is_tile_exist cur_tile tile_queue = false and is_tile_exist cur_tile visited_tiles = false  and self != source_patch and self != dest_patch
             [
               if abs ([pxcor] of cur_patch - [pxcor] of self) <= 1 and abs ([pycor] of cur_patch - [pycor] of self) <= 1 ;;Mengatasi kasus overflow dari monitor
               [
-                ;;cek bisa move ke sana atau ga pake can_move
-;                set queue lput self queue
-                set tile_queue lput cur_tile tile_queue
-
-                set parent_patch cur_patch
+                if is_movable [pxcor] of cur_patch [pycor] of cur_patch cur_rot [pxcor] of self [pycor] of self
+                [
+                  set tile_queue lput cur_tile tile_queue
+                  set parent_patch cur_patch
+                ]
               ]
             ]
           ]
 
-          ;;ask rot_states
-
-
+          if is_rotatable [pxcor] of cur_patch [pycor] of cur_patch cur_rot ((cur_rot + 1) mod 4)
+          [
+            set cur_tile replace-item 2 cur_tile  ((cur_rot + 1) mod 4)
+            set tile_queue lput cur_tile tile_queue
+            set parent_patch cur_patch
+          ]
+          if is_rotatable [pxcor] of cur_patch [pycor] of cur_patch cur_rot ((cur_rot - 1) mod 4)
+          [
+            set cur_tile replace-item 2 cur_tile  ((cur_rot - 1) mod 4)
+            set tile_queue lput cur_tile tile_queue
+            set parent_patch cur_patch
+          ]
         ]
       ]
     ]
     [
       print("Path doesn't exist")
+      user-message("Path doesn't exist")
       report []
     ]
   ]
 
-;;TESTESTEST
-;  set search_path lput current_patch search_path
+  let solution_path []
+  set solution_path lput cur_patch solution_path
 ;
-;  let temp_path first search_path
-;  while [temp_path != source_patch]
-;  [
-;    set search_path lput [parent_patch] of temp_path search_path
-;    set temp_path [parent_patch] of temp_path
-;  ]
+  let temp_path first solution_path
+  while [temp_path != source_patch]
+  [
+     set solution_path lput [parent_patch] of temp_path solution_path
+     set temp_path [parent_patch] of temp_path
+  ]
 ;
-;  set search_path fput dest_patch search_path
-;  set search_path reverse search_path
+  set solution_path fput dest_patch solution_path
+  set solution_path reverse solution_path
 ;
-;  report search_path
+report solution_path
 end
 
 ;;TEST PROCEDURE
-to test
-  let origin 0
-  ask patches [
-   if pxcor = 0 and pycor = 0 [
-    set origin self
-   ]
-  ]
-  let t 0
-  ask turtles [
-    if(who = 0) [
-     set t patch-here
-    ]
-  ]
-  print origin
-  print t
-  let path get_path t origin
-  ;;print path
-
-
-  ask turtles [print who]
-  let i 1
-  while [i < 20][
-    ask turtle 0 [
-      trace_path i path
-      set i i + 1
-    ]
-    tick
-  ]
-  ;;print path
-end
-
-to test_move [id]
-  ask turtle id [
-    print can_move 180
-  ]
-end
-
-to test_rotate [id]
-  ask turtle id [
-    print can_rotate 1
-  ]
-end
+;to test
+;  let origin 0
+;  ask patches [
+;   if pxcor = 0 and pycor = 0 [
+;    set origin self
+;   ]
+;  ]
+;  let t 0
+;  ask turtles [
+;    if(who = 0) [
+;     set t patch-here
+;    ]
+;  ]
+;  print origin
+;  print t
+;  let path get_path t origin
+;  ;;print path
+;
+;
+;  ask turtles [print who]
+;  let i 1
+;  while [i < 20][
+;    ask turtle 0 [
+;      trace_path i path
+;      set i i + 1
+;    ]
+;    tick
+;  ]
+;  ;;print path
+;end
+;
+;to test_move [id]
+;  ask turtle id [
+;    print can_move 180
+;  ]
+;end
+;
+;to test_rotate [id]
+;  ask turtle id [
+;    print can_rotate 1
+;  ]
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
